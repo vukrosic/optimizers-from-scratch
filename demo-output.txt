@@ -1,0 +1,61 @@
+== step1_gradient_descent
+start (-10.0, 1.0)  loss 100.0
+gradient by nudging: -10.0 100.0   by formula: [-10. 100.]
+learning rate 0.001  still at loss 6.76
+learning rate 0.019  reached the bottom in 223 steps
+learning rate 0.021  blew up
+== step2_sgd
+every picture each step:  10 steps  -> loss 2.061, test 19.2%
+32 pictures each step:   405 steps  -> loss 0.097, test 93.4%
+SGD, learning rate 0.1         loss after 400 steps  0.083   under 0.1 at step 350  test  92.2%
+== step3_momentum
+valley, learning rate 0.019, plain descent:  reached the bottom in 223 steps
+valley, learning rate 0.019, momentum:       reached the bottom in 83 steps
+learning rates that reach the bottom, out of 101:  plain 14, momentum 39
+SGD, learning rate 0.1         loss after 400 steps  0.083   under 0.1 at step 350  test  92.2%
+momentum, learning rate 0.0178 loss after 400 steps  0.059   under 0.1 at step 340  test  94.8%
+== step4_rmsprop
+valley, RMSProp, learning rate 0.1, first steps: (-10.00, 1.00)  (-9.68, 0.68)  (-9.46, 0.50)  (-9.27, 0.37)
+  loss after 100 steps 0.41, after 1000 steps 0.13: close, but it never settles
+typical gradient size in each layer of the network: 0.0054 0.0046 0.0035 0.0046 0.0038 0.0060
+a large gradient (top 1 %) is 22,372 times a small one (bottom 1 %)
+momentum, learning rate 0.0178 loss after 400 steps  0.059   under 0.1 at step 340  test  94.8%
+RMSProp, learning rate 0.00316 loss after 400 steps  0.064   under 0.1 at step 290  test  93.2%
+== step5_adam
+valley, Adam, learning rate 0.3:  reached the bottom in 83 steps
+learning rates that reach the bottom, out of 101:  plain 14,  momentum 39,  RMSProp 27,  Adam 54
+first five steps without the fix: 3.16 4.25 4.95 5.44 5.80
+first five steps with the fix:    1.00 1.00 1.00 1.00 1.00
+RMSProp, learning rate 0.00316 loss after 400 steps  0.064   under 0.1 at step 290  test  93.2%
+Adam, learning rate 0.01       loss after 400 steps  0.051   under 0.1 at step 300  test  94.6%
+== step6_adamw
+three weights at 1.0, gradient sizes 1, 0.1, 0.01, decay 0.1, 200 steps:
+  decay inside the gradient: 0.80 0.17 0.02
+  AdamW:                     0.80 0.80 0.80
+300 pictures, 84 of them labelled wrong, 2000 steps:
+  Adam, no decay       test 67.0%   size of all weights 24.8
+  old way, decay 0.03  test 72.4%   size of all weights 7.5
+  old way, decay 0.1   test 9.7%   size of all weights 0.1
+  AdamW, decay 1.0     test 75.0%   size of all weights 10.0
+== step7_muon
+strength of each direction in one gradient matrix (strongest = 1):
+  before: 1.00 0.49 0.39 0.28 0.20 0.13 0.09 0.07 ... 0.00000
+  after:  1.19 1.18 1.16 1.13 1.13 1.13 1.13 1.12 ... 0.00
+  directions above a tenth of the strongest: before 6 of 32, after 27 of 32
+Adam, learning rate 0.01       loss after 400 steps  0.051   under 0.1 at step 300  test  94.6%
+Muon, learning rate 0.00562    loss after 400 steps  0.026   under 0.1 at step 190  test  96.0%
+== step8_race
+           best rate  final loss  under 0.1 at    test   rates that work
+SGD              0.1       0.083      step 350   92.2%           1 of 17
+momentum      0.0178       0.059      step 340   94.8%           3 of 17
+RMSProp      0.00316       0.064      step 290   93.2%           4 of 17
+Adam            0.01       0.051      step 300   94.6%           4 of 17
+Muon         0.00562       0.026      step 190   96.0%           4 of 17
+final loss at every learning rate (. = over 1):
+             0.0001 0.000178 0.000316 0.000562    0.001  0.00178  0.00316  0.00562     0.01   0.0178   0.0316   0.0562      0.1    0.178    0.316    0.562      1.0
+SGD               .        .        .        .        .        .        .        .     0.71     0.34     0.21     0.12     0.08     0.34        .        .        .
+momentum          .        .        .        .     0.80     0.34     0.18     0.12     0.09     0.06     0.10     0.11     0.97        .        .        .        .
+RMSProp           .        .     0.59     0.28     0.13     0.08     0.06     0.08     0.08     0.21     0.43        .        .        .        .        .        .
+Adam              .     0.95     0.42     0.21     0.12     0.06     0.05     0.06     0.05     0.17     0.30     0.80        .        .        .        .        .
+Muon              .        .        .     0.89     0.39     0.10     0.03     0.03     0.05     0.08     0.23        .        .        .        .        .        .
+library default rates, no search:  SGD 0.01 -> test 82.0%,  Adam 0.001 -> test 94.2%
